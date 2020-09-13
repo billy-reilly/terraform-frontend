@@ -37,6 +37,25 @@ resource "aws_cloudfront_distribution" "web_distribution" {
     }
   }
 
+  ordered_cache_behavior {
+    path_pattern           = "/*.html"
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = local.s3_origin_id
+    min_ttl                = 0
+    default_ttl            = 60
+    max_ttl                = 31536000
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
